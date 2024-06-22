@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Model Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="number"], input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ML Model Prediction</h1>
+    <form id="prediction-form">
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year" required>
+
+        <label for="electric-vehicles">Number of Electric Vehicles:</label>
+        <input type="number" id="electric-vehicles" name="electric_vehicles" required>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <div class="result" id="result-section">
+        <h2>Result:</h2>
+        <p id="prediction-result"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('prediction-form');
+        const resultSection = document.getElementById('result-section');
+        const predictionResult = document.getElementById('prediction-result');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const requestData = {
+                Year: formData.get('year'),
+                Electric_Vehicles: formData.get('electric_vehicles')
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                predictionResult.textContent = `Predicted combustion cars: ${result.prediction}`;
+                resultSection.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                predictionResult.textContent = 'Error fetching prediction';
+                resultSection.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>
