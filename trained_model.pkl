@@ -1,1 +1,4 @@
-
+import pickle
+pickle_out = open("trained_model.pkl", "wb")
+pickle.dump(gbc, pickle_out)
+pickle_out.close()
